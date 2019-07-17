@@ -1,0 +1,1 @@
+1563352821628|5|statement|connection 3|url jdbc:mysql://127.0.0.1:3306/febs_shiro_jwt?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC|/* ping */ SELECT 1|/* ping */ SELECT 1
