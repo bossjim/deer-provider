@@ -27,4 +27,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public List<Menu> findUserPermissions(String username) {
         return this.baseMapper.findUserPermissions(username);
     }
+
+    @Override
+    public List<Menu> findUserMenus(String username) {
+        return this.baseMapper.findUserMenus(username);
+    }
 }

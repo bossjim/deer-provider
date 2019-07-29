@@ -9,4 +9,6 @@ public interface MenuMapper extends BaseMapper<Menu> {
 
     List<Menu> findUserPermissions(String userName);
 
+    List<Menu> findUserMenus(String userName);
+
 }

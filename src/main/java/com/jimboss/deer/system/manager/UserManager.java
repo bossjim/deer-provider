@@ -1,7 +1,10 @@
 package com.jimboss.deer.system.manager;
 
+import com.jimboss.deer.common.domain.router.RouterMeta;
+import com.jimboss.deer.common.domain.router.VueRouter;
 import com.jimboss.deer.common.service.CacheService;
 import com.jimboss.deer.common.utils.DeerUtil;
+import com.jimboss.deer.common.utils.TreeUtil;
 import com.jimboss.deer.system.domain.Menu;
 import com.jimboss.deer.system.domain.Role;
 import com.jimboss.deer.system.domain.User;
@@ -13,6 +16,7 @@ import com.jimboss.deer.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,5 +89,28 @@ public class UserManager {
         return DeerUtil.selectCacheByTemplate(
                 () -> this.cacheService.getUserConfig(userId),
                 () -> this.userConfigService.findByUserId(userId));
+    }
+
+    /**
+     * 通过用户名构建 Vue路由
+     *
+     * @param username 用户名
+     * @return 路由集合
+     */
+    public ArrayList<VueRouter<Menu>> getUserRouters(String username) {
+        List<VueRouter<Menu>> routes = new ArrayList<>();
+        List<Menu> menus = this.menuService.findUserMenus(username);
+        menus.forEach(menu -> {
+            VueRouter<Menu> route = new VueRouter<>();
+            route.setId(menu.getMenuId().toString());
+            route.setParentId(menu.getParentId().toString());
+            route.setIcon(menu.getIcon());
+            route.setPath(menu.getPath());
+            route.setComponent(menu.getComponent());
+            route.setName(menu.getMenuName());
+            route.setMeta(new RouterMeta(true, null));
+            routes.add(route);
+        });
+        return TreeUtil.buildVueRouter(routes);
     }
 }
