@@ -2,6 +2,8 @@ package com.jimboss.deer.common.service;
 
 import com.jimboss.deer.common.exception.RedisConnectException;
 
+import java.util.Set;
+
 public interface RedisService {
     /**
      * get命令
@@ -55,5 +57,15 @@ public interface RedisService {
      * @param member value
      */
     Long zadd(String key, Double score, String member) throws RedisConnectException;
+
+    /**
+     * zrangeByScore 命令
+     *
+     * @param key key
+     * @param min min
+     * @param max max
+     * @return Set<String>
+     */
+    Set<String> zrangeByScore(String key, String min, String max) throws RedisConnectException;
 
 }

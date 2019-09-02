@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.util.Set;
+
 /**
  * @ClassName RedisServiceImpl
  * @Description Redis 工具类，只封装了几个常用的 redis 命令，可根据实际需要按类似的方式扩展即可。
@@ -65,5 +67,10 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public Long zadd(String key, Double score, String member) throws RedisConnectException {
         return this.excuteByJedis(j -> j.zadd(key, score, member));
+    }
+
+    @Override
+    public Set<String> zrangeByScore(String key, String min, String max) throws RedisConnectException {
+        return this.excuteByJedis(j -> j.zrangeByScore(key, min, max));
     }
 }
