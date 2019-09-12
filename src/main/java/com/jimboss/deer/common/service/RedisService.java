@@ -68,4 +68,13 @@ public interface RedisService {
      */
     Set<String> zrangeByScore(String key, String min, String max) throws RedisConnectException;
 
+    /**
+     * zrem 命令
+     *
+     * @param key     key
+     * @param members members
+     * @return Long
+     */
+    Long zrem(String key, String... members) throws RedisConnectException;
+
 }

@@ -19,4 +19,19 @@ public interface UserService extends IService<User> {
      * @param username username
      */
     void updateLoginTime(String username) throws Exception;
+
+    /**
+     * 更新个人信息
+     *
+     * @param user 个人信息
+     */
+    void updateProfile(User user) throws Exception;
+
+    /**
+     * 更新用户密码
+     *
+     * @param username 用户名
+     * @param password 新密码
+     */
+    void updatePassword(String username, String password) throws Exception;
 }

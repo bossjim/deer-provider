@@ -26,4 +26,9 @@ public class DeerConstant {
     // user个性化配置前缀
     public static final String USER_CONFIG_CACHE_PREFIX = "deer.cache.user.config.";
 
+    // 排序规则： descend 降序
+    public static final String ORDER_DESC = "descend";
+    // 排序规则： ascend 升序
+    public static final String ORDER_ASC = "ascend";
+
 }

@@ -12,4 +12,11 @@ public interface UserConfigService extends IService<UserConfig> {
      * @return 前端系统个性化配置
      */
     UserConfig findByUserId(String userId);
+
+    /**
+     * 更新用户个性化配置
+     *
+     * @param  userConfig 用户个性化配置
+     */
+    void update(UserConfig userConfig) throws Exception;
 }

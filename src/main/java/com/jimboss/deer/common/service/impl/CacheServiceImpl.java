@@ -10,6 +10,7 @@ import com.jimboss.deer.system.domain.Menu;
 import com.jimboss.deer.system.domain.Role;
 import com.jimboss.deer.system.domain.User;
 import com.jimboss.deer.system.domain.UserConfig;
+import com.jimboss.deer.system.service.UserConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,9 @@ public class CacheServiceImpl implements CacheService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private UserConfigService userConfigService;
 
     @Override
     public User getUser(String username) throws Exception {
@@ -86,5 +90,19 @@ public class CacheServiceImpl implements CacheService {
             throw new Exception();
         else
             return this.mapper.readValue(userConfigString, UserConfig.class);
+    }
+
+    @Override
+    public void saveUserConfigs(String userId) throws Exception {
+        UserConfig userConfig = this.userConfigService.findByUserId(userId);
+        if (userConfig != null) {
+            this.deleteUserConfigs(userId);
+            redisService.set(DeerConstant.USER_CONFIG_CACHE_PREFIX + userId, mapper.writeValueAsString(userConfig));
+        }
+    }
+
+    @Override
+    public void deleteUserConfigs(String userId) throws Exception {
+        redisService.del(DeerConstant.USER_CONFIG_CACHE_PREFIX + userId);
     }
 }

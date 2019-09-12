@@ -3,6 +3,7 @@ package com.jimboss.deer.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jimboss.deer.common.service.CacheService;
+import com.jimboss.deer.common.utils.MD5Util;
 import com.jimboss.deer.system.dao.UserMapper;
 import com.jimboss.deer.system.domain.User;
 import com.jimboss.deer.system.service.UserService;
@@ -43,6 +44,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         this.baseMapper.update(user, new LambdaQueryWrapper<User>().eq(User::getUsername, username));
 
         // 重新将用户信息加载到 redis中
+        cacheService.saveUser(username);
+    }
+
+    @Override
+    @Transactional
+    public void updateProfile(User user) throws Exception {
+        updateById(user);
+        // 重新缓存用户信息
+        cacheService.saveUser(user.getUsername());
+    }
+
+    @Override
+    @Transactional
+    public void updatePassword(String username, String password) throws Exception {
+        User user = new User();
+        user.setPassword(MD5Util.encrypt(username, password));
+
+        this.baseMapper.update(user, new LambdaQueryWrapper<User>().eq(User::getUsername, username));
+        // 重新缓存用户信息
         cacheService.saveUser(username);
     }
 }

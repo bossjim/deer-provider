@@ -54,4 +54,18 @@ public interface CacheService {
      */
     UserConfig getUserConfig(String userId) throws Exception;
 
+    /**
+     * 缓存用户个性化配置
+     *
+     * @param userId 用户 ID
+     */
+    void saveUserConfigs(String userId) throws Exception;
+
+    /**
+     * 删除用户个性化配置
+     *
+     * @param userId 用户 ID
+     */
+    void deleteUserConfigs(String userId) throws Exception;
+
 }

@@ -73,4 +73,9 @@ public class RedisServiceImpl implements RedisService {
     public Set<String> zrangeByScore(String key, String min, String max) throws RedisConnectException {
         return this.excuteByJedis(j -> j.zrangeByScore(key, min, max));
     }
+
+    @Override
+    public Long zrem(String key, String... members) throws RedisConnectException {
+        return this.excuteByJedis(j -> j.zrem(key, members));
+    }
 }
