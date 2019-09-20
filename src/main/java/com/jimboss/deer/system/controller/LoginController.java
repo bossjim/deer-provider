@@ -10,6 +10,7 @@ import com.jimboss.deer.common.exception.DeerException;
 import com.jimboss.deer.common.properties.DeerProperties;
 import com.jimboss.deer.common.service.RedisService;
 import com.jimboss.deer.common.utils.*;
+import com.jimboss.deer.system.dao.LoginLogMapper;
 import com.jimboss.deer.system.domain.LoginLog;
 import com.jimboss.deer.system.domain.User;
 import com.jimboss.deer.system.domain.UserConfig;
@@ -20,6 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.lionsoul.ip2region.DbSearcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,6 +57,8 @@ public class LoginController {
     private RedisService redisService;
     @Autowired
     private ObjectMapper mapper;
+    @Autowired
+    private LoginLogMapper loginLogMapper;
 
     @PostMapping("/login")
     public DeerResponse login(
@@ -138,5 +144,25 @@ public class LoginController {
         user.setPassword("it's a secret");
         userInfo.put("user", user);
         return userInfo;
+    }
+
+    @GetMapping("index/{username}")
+    public DeerResponse index(@NotBlank(message = "{required}") @PathVariable String username) {
+        Map<String, Object> data = new HashMap<>();
+        // 获取系统访问记录
+        Long totalVisitCount = loginLogMapper.findTotalVisitCount();
+        data.put("totalVisitCount", totalVisitCount);
+        Long todayVisitCount = loginLogMapper.findTodayVisitCount();
+        data.put("todayVisitCount", todayVisitCount);
+        Long todayIp = loginLogMapper.findTodayIp();
+        data.put("todayIp", todayIp);
+        // 获取近期系统访问记录
+        List<Map<String, Object>> lastSevenVisitCount = loginLogMapper.findLastSevenDaysVisitCount(null);
+        data.put("lastSevenVisitCount", lastSevenVisitCount);
+        User param = new User();
+        param.setUsername(username);
+        List<Map<String, Object>> lastSevenUserVisitCount = loginLogMapper.findLastSevenDaysVisitCount(param);
+        data.put("lastSevenUserVisitCount", lastSevenUserVisitCount);
+        return new DeerResponse().data(data);
     }
 }
