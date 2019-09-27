@@ -65,4 +65,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 重新缓存用户信息
         cacheService.saveUser(username);
     }
+
+    @Override
+    @Transactional
+    public void updateAvatar(String username, String avatar) throws Exception {
+        User user = new User();
+        user.setAvatar(avatar);
+
+        this.baseMapper.update(user, new LambdaQueryWrapper<User>().eq(User::getUsername, username));
+        // 重新缓存用户信息
+        cacheService.saveUser(username);
+    }
 }

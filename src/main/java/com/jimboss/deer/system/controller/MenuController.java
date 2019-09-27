@@ -38,36 +38,8 @@ public class MenuController extends BaseController {
     @Autowired
     private UserManager userManager;
 
-    @Autowired
-    private RedisService redisService;
-
-    @Autowired
-    private ObjectMapper mapper;
-
     @GetMapping("/{username}")
     public ArrayList<VueRouter<Menu>> getUserRouters(@NotBlank(message = "{required}") @PathVariable String username) {
         return this.userManager.getUserRouters(username);
-    }
-
-    @DeleteMapping("kickout/{id}")
-    @RequiresPermissions("user:kickout")
-    public void kickout(@NotBlank(message = "{required}") @PathVariable String id) throws Exception {
-        String now = DateUtil.formatFullTime(LocalDateTime.now());
-        Set<String> userOnlineStringSet = redisService.zrangeByScore(DeerConstant.ACTIVE_USERS_ZSET_PREFIX, now, "+inf");
-        ActiveUser kickoutUser = null;
-        String kickoutUserString = "";
-        for (String userOnlineString : userOnlineStringSet) {
-            ActiveUser activeUser = mapper.readValue(userOnlineString, ActiveUser.class);
-            if (StringUtils.equals(activeUser.getId(), id)) {
-                kickoutUser = activeUser;
-                kickoutUserString = userOnlineString;
-            }
-        }
-        if (kickoutUser != null && StringUtils.isNotBlank(kickoutUserString)) {
-            // 删除 zset中的记录
-            redisService.zrem(DeerConstant.ACTIVE_USERS_ZSET_PREFIX, kickoutUserString);
-            // 删除对应的 token缓存
-            redisService.del(DeerConstant.TOKEN_CACHE_PREFIX + kickoutUser.getToken() + "." + kickoutUser.getIp());
-        }
     }
 }

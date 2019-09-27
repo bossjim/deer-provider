@@ -34,4 +34,12 @@ public interface UserService extends IService<User> {
      * @param password 新密码
      */
     void updatePassword(String username, String password) throws Exception;
+
+    /**
+     * 更新用户头像
+     *
+     * @param username 用户名
+     * @param avatar   用户头像
+     */
+    void updateAvatar(String username, String avatar) throws Exception;
 }

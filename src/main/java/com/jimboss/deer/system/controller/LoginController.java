@@ -18,13 +18,11 @@ import com.jimboss.deer.system.manager.UserManager;
 import com.jimboss.deer.system.service.LoginLogService;
 import com.jimboss.deer.system.service.UserService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.lionsoul.ip2region.DbSearcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
@@ -164,5 +162,32 @@ public class LoginController {
         List<Map<String, Object>> lastSevenUserVisitCount = loginLogMapper.findLastSevenDaysVisitCount(param);
         data.put("lastSevenUserVisitCount", lastSevenUserVisitCount);
         return new DeerResponse().data(data);
+    }
+
+    @GetMapping("logout/{id}")
+    public void logout(@NotBlank(message = "{required}") @PathVariable String id) throws Exception {
+        this.kickout(id);
+    }
+
+    @DeleteMapping("kickout/{id}")
+    @RequiresPermissions("user:kickout")
+    public void kickout(@NotBlank(message = "{required}") @PathVariable String id) throws Exception {
+        String now = DateUtil.formatFullTime(LocalDateTime.now());
+        Set<String> userOnlineStringSet = redisService.zrangeByScore(DeerConstant.ACTIVE_USERS_ZSET_PREFIX, now, "+inf");
+        ActiveUser kickoutUser = null;
+        String kickoutUserString = "";
+        for (String userOnlineString : userOnlineStringSet) {
+            ActiveUser activeUser = mapper.readValue(userOnlineString, ActiveUser.class);
+            if (StringUtils.equals(activeUser.getId(), id)) {
+                kickoutUser = activeUser;
+                kickoutUserString = userOnlineString;
+            }
+        }
+        if (kickoutUser != null && StringUtils.isNotBlank(kickoutUserString)) {
+            // 删除 zset中的记录
+            redisService.zrem(DeerConstant.ACTIVE_USERS_ZSET_PREFIX, kickoutUserString);
+            // 删除对应的 token缓存
+            redisService.del(DeerConstant.TOKEN_CACHE_PREFIX + kickoutUser.getToken() + "." + kickoutUser.getIp());
+        }
     }
 }

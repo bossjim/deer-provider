@@ -85,4 +85,17 @@ public class UserController extends BaseController {
             throw new DeerException(message);
         }
     }
+
+    @PutMapping("avatar")
+    public void updateAvatar(
+            @NotBlank(message = "{required}") String username,
+            @NotBlank(message = "{required}") String avatar) throws DeerException {
+        try {
+            this.userService.updateAvatar(username, avatar);
+        } catch (Exception e) {
+            message = "修改头像失败";
+            log.error(message, e);
+            throw new DeerException(message);
+        }
+    }
 }
