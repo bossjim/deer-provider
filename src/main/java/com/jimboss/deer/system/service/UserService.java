@@ -1,6 +1,8 @@
 package com.jimboss.deer.system.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jimboss.deer.common.domain.QueryRequest;
 import com.jimboss.deer.system.domain.User;
 
 public interface UserService extends IService<User> {
@@ -42,4 +44,13 @@ public interface UserService extends IService<User> {
      * @param avatar   用户头像
      */
     void updateAvatar(String username, String avatar) throws Exception;
+
+    /**
+     * 查询用户详情，包括基本信息，用户角色，用户部门
+     *
+     * @param user user
+     * @param queryRequest queryRequest
+     * @return IPage
+     */
+    IPage<User> findUserDetail(User user, QueryRequest queryRequest);
 }

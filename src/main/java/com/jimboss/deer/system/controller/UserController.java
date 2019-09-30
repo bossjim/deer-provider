@@ -1,6 +1,7 @@
 package com.jimboss.deer.system.controller;
 
 import com.jimboss.deer.common.controller.BaseController;
+import com.jimboss.deer.common.domain.QueryRequest;
 import com.jimboss.deer.common.exception.DeerException;
 import com.jimboss.deer.common.utils.MD5Util;
 import com.jimboss.deer.system.domain.User;
@@ -9,6 +10,7 @@ import com.jimboss.deer.system.service.UserConfigService;
 import com.jimboss.deer.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.Map;
 
 /**
  * @ClassName UserController
@@ -98,4 +101,11 @@ public class UserController extends BaseController {
             throw new DeerException(message);
         }
     }
+
+    @GetMapping
+    @RequiresPermissions("user:view")
+    public Map<String, Object> userList(QueryRequest queryRequest, User user) {
+        return getDataTable(userService.findUserDetail(user, queryRequest));
+    }
+
 }

@@ -1,9 +1,14 @@
 package com.jimboss.deer.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jimboss.deer.common.domain.DeerConstant;
+import com.jimboss.deer.common.domain.QueryRequest;
 import com.jimboss.deer.common.service.CacheService;
 import com.jimboss.deer.common.utils.MD5Util;
+import com.jimboss.deer.common.utils.SortUtil;
 import com.jimboss.deer.system.dao.UserMapper;
 import com.jimboss.deer.system.domain.User;
 import com.jimboss.deer.system.service.UserService;
@@ -75,5 +80,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         this.baseMapper.update(user, new LambdaQueryWrapper<User>().eq(User::getUsername, username));
         // 重新缓存用户信息
         cacheService.saveUser(username);
+    }
+
+    @Override
+    public IPage<User> findUserDetail(User user, QueryRequest request) {
+        try {
+            Page<User> page = new Page<>();
+            SortUtil.handlePageSort(request, page, "userId", DeerConstant.ORDER_ASC, false);
+            return this.baseMapper.findUserDetail(page, user);
+        } catch (Exception e) {
+            log.error("查询用户异常", e);
+            return null;
+        }
     }
 }
