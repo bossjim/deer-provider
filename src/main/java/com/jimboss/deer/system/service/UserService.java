@@ -23,6 +23,13 @@ public interface UserService extends IService<User> {
     void updateLoginTime(String username) throws Exception;
 
     /**
+     * 新增用户
+     *
+     * @param user user
+     */
+    void createUser(User user) throws Exception;
+
+    /**
      * 更新个人信息
      *
      * @param user 个人信息
@@ -53,4 +60,25 @@ public interface UserService extends IService<User> {
      * @return IPage
      */
     IPage<User> findUserDetail(User user, QueryRequest queryRequest);
+
+    /**
+     * 删除用户
+     *
+     * @param userIds 用户 id数组
+     */
+    void deleteUsers(String[] userIds) throws Exception;
+
+    /**
+     * 修改用户
+     *
+     * @param user user
+     */
+    void updateUser(User user) throws Exception;
+
+    /**
+     * 重置密码
+     *
+     * @param usernames 用户集合
+     */
+    void resetPassword(String[] usernames) throws Exception;
 }

@@ -19,4 +19,18 @@ public interface UserConfigService extends IService<UserConfig> {
      * @param  userConfig 用户个性化配置
      */
     void update(UserConfig userConfig) throws Exception;
+
+    /**
+     * 通过用户 ID 删除个性化配置
+     *
+     * @param userIds 用户 ID 数组
+     */
+    void deleteByUserId(String... userIds);
+
+    /**
+     * 生成用户默认个性化配置
+     *
+     * @param userId 用户 ID
+     */
+    void initDefaultUserConfig(String userId);
 }

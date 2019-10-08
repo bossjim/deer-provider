@@ -113,4 +113,37 @@ public class UserManager {
         });
         return TreeUtil.buildVueRouter(routes);
     }
+
+    /**
+     * 通过用户 id集合批量删除用户 Redis缓存
+     *
+     * @param userIds userIds
+     */
+    public void deleteUserRedisCache(String... userIds) throws Exception {
+        for (String userId : userIds) {
+            User user = userService.getById(userId);
+            if (user != null) {
+                cacheService.deleteUser(user.getUsername());
+                cacheService.deleteRoles(user.getUsername());
+                cacheService.deletePermissions(user.getUsername());
+            }
+            cacheService.deleteUserConfigs(userId);
+        }
+    }
+
+    /**
+     * 将用户相关信息添加到 Redis缓存中
+     *
+     * @param user user
+     */
+    public void loadUserRedisCache(User user) throws Exception {
+        // 缓存用户
+        cacheService.saveUser(user.getUsername());
+        // 缓存用户角色
+        cacheService.saveRoles(user.getUsername());
+        // 缓存用户权限
+        cacheService.savePermissions(user.getUsername());
+        // 缓存用户个性化配置
+        cacheService.saveUserConfigs(String.valueOf(user.getUserId()));
+    }
 }
