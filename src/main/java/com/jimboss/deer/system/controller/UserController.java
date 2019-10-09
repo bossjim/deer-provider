@@ -44,6 +44,16 @@ public class UserController extends BaseController {
     @Autowired
     private UserConfigService userConfigService;
 
+    @GetMapping("check/{username}")
+    public boolean checkUserName(@NotBlank(message = "{required}") @PathVariable String username) {
+        return this.userService.findByName(username) == null;
+    }
+
+    @GetMapping("/{username}")
+    public User detail(@NotBlank(message = "{required}") @PathVariable String username) {
+        return this.userService.findByName(username);
+    }
+
     @PutMapping("profile")
     public void updateProfile(@Valid User user) throws DeerException {
         try {
